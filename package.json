@@ -1,0 +1,37 @@
+{
+  "name": "kindle-newrelease-checker-webapp",
+  "version": "0.1.0",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": "8.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noriaki/kindle-newrelease-chekcer-webapp.git"
+  },
+  "author": {
+    "name": "Noriaki Uchiyama",
+    "email": "uchiyama.noriaki@gmail.com",
+    "url": "https://github.com/noriaki"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint --quiet ."
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jest": "^20.0.3",
+    "eslint-plugin-react": "^7.3.0",
+    "jest": "^20.0.4"
+  },
+  "dependencies": {
+    "next": "^3.0.6",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
