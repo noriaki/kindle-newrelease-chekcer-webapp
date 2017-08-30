@@ -12,6 +12,7 @@ const server = express();
 
 const main = async () => {
   await nextServer.prepare();
+  server.use(bodyParser.urlencoded({ extended: false }));
   server.use(bodyParser.json());
   server.use(bearerToken({ bodyKey: 'token', queryKey: 'token' }));
   server.use('/api/v1', api);
