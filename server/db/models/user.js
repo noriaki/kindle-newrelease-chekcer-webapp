@@ -7,6 +7,7 @@ const userSchema = new Schema({
     unique: true,
     required: true,
   },
+  asins: Array,
 }, {
   timestamps: true,
 });
