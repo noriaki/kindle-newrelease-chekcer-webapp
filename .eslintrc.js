@@ -5,25 +5,28 @@ module.exports = {
     node: true,
     browser: true,
     es6: true,
-    'jest/globals': true
+    'jest/globals': true,
   },
   extends: [
     'eslint:recommended',
+    'plugin:react/recommended',
   ],
   plugins: [
-    'jest'
+    'jest',
+    'import',
+    'react',
   ],
   parserOptions: {
     ecmaVersion: 2017,
     sourceType: 'module',
     ecmaFeatures: {
       experimentalObjectRestSpread: true,
-      jsx: true
-    }
+      jsx: true,
+    },
   },
   globals: {
     BRANCH: true,
-    COMMIT: true
+    COMMIT: true,
   },
   rules: {
     indent: ['error', 2],
@@ -32,7 +35,7 @@ module.exports = {
       objects: 'always-multiline',
       imports: 'always-multiline',
       exports: 'always-multiline',
-      functions: 'never'
+      functions: 'never',
     }],
     'no-console': 'warn',
     'no-use-before-define': 'off',
@@ -41,7 +44,7 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.js'] }],
     'react/prop-types': 'warn',
     'import/no-extraneous-dependencies': [
-      'error', { dependencies: true, peerDependencies: true }
+      'error', { devDependencies: ['**/*.test.js', '**/*.spec.js'] },
     ],
     'no-restricted-syntax': [
       'error',

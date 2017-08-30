@@ -6,6 +6,11 @@
   "engines": {
     "node": "8.4.0"
   },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint --quiet .",
+    "dev": "nf start"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/noriaki/kindle-newrelease-chekcer-webapp.git"
@@ -16,22 +21,27 @@
     "url": "https://github.com/noriaki"
   },
   "license": "MIT",
-  "scripts": {
-    "test": "jest",
-    "lint": "eslint --quiet ."
-  },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "eslint": "^4.5.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-react": "^7.3.0",
-    "jest": "^20.0.4"
+    "foreman": "^2.0.0",
+    "jest": "^20.0.4",
+    "supervisor": "^0.12.0"
   },
   "dependencies": {
+    "body-parser": "^1.17.2",
+    "dexie": "^2.0.0-beta.11",
+    "express": "^4.15.4",
+    "express-bearer-token": "^2.1.0",
+    "js-cookie": "^2.1.4",
+    "jsonwebtoken": "^7.4.3",
     "next": "^3.0.6",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "uuid": "^3.1.0"
   }
 }
