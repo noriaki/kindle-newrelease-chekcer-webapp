@@ -1,16 +1,31 @@
 import React, { Component } from 'react';
-import uuid from 'uuid/v4';
+import Cookies from 'js-cookie';
+import fetch from 'isomorphic-fetch';
+import Dexie from 'dexie';
 
 class IndexPage extends Component {
-  static getInitialProps = async ({ req }) => {
-    return { uuid: uuid() };
+  componentDidMount = async () => {
+    const db = new Dexie('kindle-newrelease-chekcer-webapp-db');
+    db.version(1).stores({ sessions: '&identifier,token' });
+    const identifier = Cookies.get('identifier');
+    const body = JSON.stringify(identifier ? { identifier } : {});
+    const { user, token } = await fetch('/api/v1/session', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body,
+    }).then(res => res.json());
+    Cookies.set('identifier', user.identifier);
+    Cookies.set('token', token);
+    const dbQuery = db.sessions.where('identifier').equals(identifier);
+    const currentSession = await dbQuery.first();
+    console.log(currentSession);
+    if (currentSession == null) {
+      await db.sessions.add({ identifier: user.identifier, token });
+    } else {
+      await dbQuery.modify({ token });
+    }
   }
 
-  componentDidMount = () => {}
-
   render = () => {
-    const { uuid } = this.props;
-    return <div>Hello world / {uuid}</div>;
+    return <div>Hello world</div>;
   }
 }
 
