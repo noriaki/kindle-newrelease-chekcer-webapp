@@ -50,7 +50,9 @@ routes.post('/books', async (req, res) => {
   const { asins } = req.body;
   await User.findOneAndUpdate({ identifier }, { asins });
   for (const asin of asins) {
-    await Book.findOneAndUpdate({ asin }, { asin }, { upsert: true });
+    await Book.findOneAndUpdate({ asin }, { asin }, {
+      upsert: true, setDefaultsOnInsert: true,
+    });
   }
   sendJSON(res, { success: true });
 });
