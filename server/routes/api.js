@@ -3,9 +3,13 @@ const uuid = require('uuid/v4');
 const routes = require('express').Router();
 const { sendJSON } = require('next/dist/server/render');
 
+const createExchange = require('../../worker/amqp');
+
 const { createConnection } = require('../db');
 const { userSchema } = require('../db/models/user');
 const { bookSchema } = require('../db/models/book');
+
+const exchange = createExchange();
 
 const connection = createConnection();
 const User = connection.model('User', userSchema);
@@ -55,6 +59,16 @@ routes.post('/books', async (req, res) => {
     });
   }
   sendJSON(res, { success: true });
+});
+
+routes.post('/my', (req, res) => {
+  const { identifier } = req.user;
+  const { aid, apw } = req.body;
+  const dataToken = jwt.sign(
+    { identifier, aid, apw }, cert, { expiresIn: '1d' }
+  );
+  exchange.publish({ dataToken }, { key: 'books.purchased.get' });
+  sendJSON(res, { success: true, queue: true });
 });
 
 module.exports = routes;
