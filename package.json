@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --quiet .",
-    "dev": "nf start"
+    "dev": "nf start web=1,worker=1"
   },
   "repository": {
     "type": "git",
