@@ -1,5 +1,5 @@
 const { Schema } = require('mongoose');
-const getBooksByIds = require('../../amazon/getBooksByIds');
+const getBooks = require('../../../lib/amazon/getBooks');
 
 const bookSchema = new Schema({
   asin: {
@@ -44,7 +44,7 @@ class Book {
     await this.updateMany(
       { asin: { '$in': targetASINs }}, { processing: true }
     );
-    const details = await getBooksByIds(targetASINs);
+    const details = await getBooks(targetASINs);
     for (const book of books) {
       const attributes = details[book.asin];
       await book.set({
