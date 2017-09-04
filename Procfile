@@ -1,1 +1,2 @@
 web: $WEB
+worker: $WORKER

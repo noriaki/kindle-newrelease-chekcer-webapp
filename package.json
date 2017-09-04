@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --quiet .",
-    "dev": "nf start"
+    "dev": "nf start web=1,worker=1"
   },
   "repository": {
     "type": "git",
@@ -38,8 +38,11 @@
     "express": "^4.15.4",
     "express-bearer-token": "^2.1.0",
     "isomorphic-fetch": "^2.2.1",
+    "jackrabbit": "^4.3.0",
     "js-cookie": "^2.1.4",
     "jsonwebtoken": "^7.4.3",
+    "lodash.memoize": "^4.1.2",
+    "moji": "niwaringo/moji",
     "mongoose": "^4.11.9",
     "next": "^3.0.6",
     "object-dig": "^0.1.1",
@@ -47,6 +50,7 @@
     "puppeteer": "^0.10.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "throng": "^4.0.0",
     "uuid": "^3.1.0"
   }
 }

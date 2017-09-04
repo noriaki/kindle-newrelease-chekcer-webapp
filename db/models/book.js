@@ -1,5 +1,8 @@
+const moji = require('moji');
 const { Schema } = require('mongoose');
-const getBooks = require('../../../lib/amazon/getBooks');
+
+const connection = require('../').createConnection();
+const getBooks = require('../../lib/amazon/getBooks');
 
 const bookSchema = new Schema({
   asin: {
@@ -19,10 +22,12 @@ const bookSchema = new Schema({
     default: false,
   },
   title: String,
+  titleReading: String,
   description: String,
   url: String,
   image: String,
   authors: Array,
+  authorsReading: String,
   publisher: String,
   publishedAt: Date,
   releasedAt: Date,
@@ -30,7 +35,7 @@ const bookSchema = new Schema({
   timestamps: true,
 });
 
-class Book {
+class BookClass {
   static async firstOrCreate(query, doc = query) {
     const book = await this.findOne(query);
     if (book) { return { book, newRecord: false }; }
@@ -61,9 +66,32 @@ class Book {
       .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }])
       .limit(10);
   }
-}
-bookSchema.loadClass(Book);
 
-module.exports = {
-  bookSchema,
-};
+  static async createOrUpdateByMyxItem({
+    asin, authors, productImage, sortableAuthors, sortableTitle, title,
+  }) {
+    const params = {
+      authors: extractAuthors(authors),
+      authorsReading: sortableAuthors,
+      image: productImage,
+      title,
+      titleReading: sortableTitle,
+    };
+    let book = await this.findOne({ asin });
+    if (book == null) { book = new this({ asin }); }
+    return await book.set(params).save();
+  }
+}
+bookSchema.loadClass(BookClass);
+
+const Book = connection.model('Book', bookSchema);
+Book.shcema = bookSchema;
+
+module.exports = Book;
+
+const extractAuthors = authors => (
+  moji(authors)
+    .convert('ZStoHS').toString()
+    .split(/[、､，,]+\s*/g)
+    .map(author => author.replace(/\s+/g, ''))
+);
