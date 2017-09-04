@@ -5,9 +5,9 @@ const { sendJSON } = require('next/dist/server/render');
 
 const createExchange = require('../../worker/amqp');
 
-const { createConnection } = require('../db');
-const { userSchema } = require('../db/models/user');
-const { bookSchema } = require('../db/models/book');
+const { createConnection } = require('../../db');
+const { userSchema } = require('../../db/models/user');
+const { bookSchema } = require('../../db/models/book');
 
 const exchange = createExchange();
 

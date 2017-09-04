@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken');
 
 const getPurchasedBooks = require('../../lib/amazon/getPurchasedBooks');
 
-const { createConnection } = require('../../server/db');
-const { userSchema } = require('../../server/db/models/user');
-const { bookSchema } = require('../../server/db/models/book');
+const { createConnection } = require('../../db');
+const { userSchema } = require('../../db/models/user');
+const { bookSchema } = require('../../db/models/book');
 
 const connection = createConnection();
 const User = connection.model('User', userSchema);
