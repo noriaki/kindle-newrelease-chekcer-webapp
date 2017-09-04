@@ -3,17 +3,10 @@ const uuid = require('uuid/v4');
 const routes = require('express').Router();
 const { sendJSON } = require('next/dist/server/render');
 
-const createExchange = require('../../worker/amqp');
+const exchange = require('../../worker/amqp').createExchange();
 
-const { createConnection } = require('../../db');
-const { userSchema } = require('../../db/models/user');
-const { bookSchema } = require('../../db/models/book');
-
-const exchange = createExchange();
-
-const connection = createConnection();
-const User = connection.model('User', userSchema);
-const Book = connection.model('Book', bookSchema);
+const User = require('../../db/models/user');
+const Book = require('../../db/models/book');
 
 const cert = process.env.SECRET_KEY_BASE;
 
