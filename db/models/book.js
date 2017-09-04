@@ -61,6 +61,16 @@ class Book {
       .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }])
       .limit(10);
   }
+
+  static createByAmazonApiResult({
+    asin,
+    authors,
+    productImage,
+    sortableAuthors,
+    sortableTitle,
+    title,
+  }) {
+  }
 }
 bookSchema.loadClass(Book);
 
