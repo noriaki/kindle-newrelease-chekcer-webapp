@@ -3536,6 +3536,10 @@ mkdirp@0.5.0:
   dependencies:
     minimist "0.0.8"
 
+moji@niwaringo/moji:
+  version "1.2.0"
+  resolved "https://codeload.github.com/niwaringo/moji/tar.gz/a1511d1776e460007a41d57d147739fc56dd7b49"
+
 moment@2.x.x, moment@^2.11.2:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
