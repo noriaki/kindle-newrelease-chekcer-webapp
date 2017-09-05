@@ -2,13 +2,15 @@ const throng = require('throng');
 
 const createExchange = require('./amqp');
 const getPurchasedBooksConsumer = require('./consumers/getPurchasedBooks');
+const getBooksConsumer = require('./consumers/getBooks');
 const consumers = {
   getPurchasedBooksConsumer,
+  getBooksConsumer,
 };
 
 throng({ workers: 1 }, () => {
   const shutdown = () => {
-    console.log('shutting down');
+    console.log('> Shutting worker down');
     process.exit();
   }
   process.on('SIGTERM', shutdown);
@@ -21,5 +23,6 @@ throng({ workers: 1 }, () => {
       .consume(consumer.handler);
   }
 
-  console.log(`> Ready on worker (${Object.keys(consumers).join(', ')})`);
+  const consumerNameList = Object.keys(consumers).map(name => `  - ${name}`);
+  console.log(`> Ready on worker...\n${consumerNameList.join('\n')}\n`);
 });
