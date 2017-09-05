@@ -11,6 +11,10 @@ const handler = ({ asins }, ack) => {
         ...(attributes || {}), active: Boolean(attributes), processing: false,
       });
     }
+    console.log(
+      'Processed from [%s] %s..%s',
+      options.name, asins[0], asins[asins.length - 1]
+    );
     ack();
   })();
 };
