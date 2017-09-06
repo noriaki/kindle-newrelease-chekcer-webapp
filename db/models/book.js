@@ -67,7 +67,7 @@ class BookClass {
   static whereNeedsUpdate() {
     const oneDayBefore = new Date(Date.now() - (23 * 60 * 60 * 1000));
     return this
-      .where({ processing: false })
+      .where({ processing: false, disable: false })
       .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }])
       .limit(10);
   }

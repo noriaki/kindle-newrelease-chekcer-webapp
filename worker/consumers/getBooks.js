@@ -7,9 +7,15 @@ const handler = ({ asins }, ack) => {
     const details = await getBooks(asins);
     for (const asin of asins) {
       const attributes = details[asin];
-      await Book.findOneAndUpdate({ asin }, {
-        ...(attributes || {}), active: Boolean(attributes), processing: false,
-      });
+      if (attributes) {
+        await Book.findOneAndUpdate(
+          { asin }, { ...attributes, active: true, processing: false }
+        );
+      } else {
+        await Book.findOneAndUpdate(
+          { asin }, { disable: true, processing: false }
+        );
+      }
     }
     console.log(
       'Processed from [%s] %s..%s',
