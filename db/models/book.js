@@ -21,6 +21,11 @@ const bookSchema = new Schema({
     index: true,
     default: false,
   },
+  disable: {
+    type: Boolean,
+    index: true,
+    default: false,
+  },
   title: String,
   titleReading: String,
   description: String,
