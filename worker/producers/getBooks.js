@@ -7,7 +7,7 @@ const key = 'books.detail.get';
   let books = await Book.whereNeedsUpdate().exec();
   while (books != null && books.length > 0) {
     const asins = books.map(book => book.asin);
-    console.log('processing to [%s]... %s', key, asins.join());
+    console.log('Processing to [%s]... %s', key, asins.join());
     await Book.updateMany({ asin: { '$in': asins } }, { processing: true });
     exchange.publish({ asins }, { key });
     books = await Book.whereNeedsUpdate().exec();
