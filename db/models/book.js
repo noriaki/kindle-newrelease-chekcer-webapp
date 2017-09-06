@@ -21,6 +21,11 @@ const bookSchema = new Schema({
     index: true,
     default: false,
   },
+  disable: {
+    type: Boolean,
+    index: true,
+    default: false,
+  },
   title: String,
   titleReading: String,
   description: String,
@@ -60,9 +65,9 @@ class BookClass {
   }
 
   static whereNeedsUpdate() {
-    const oneDayBefore = new Date(Date.now() - (24 * 60 * 60 * 1000));
+    const oneDayBefore = new Date(Date.now() - (23 * 60 * 60 * 1000));
     return this
-      .where({ processing: false })
+      .where({ processing: false, disable: false })
       .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }])
       .limit(10);
   }

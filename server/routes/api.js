@@ -3,7 +3,7 @@ const uuid = require('uuid/v4');
 const routes = require('express').Router();
 const { sendJSON } = require('next/dist/server/render');
 
-const exchange = require('../../worker/amqp').createExchange();
+const exchange = require('../../worker/amqp')();
 
 const User = require('../../db/models/user');
 const Book = require('../../db/models/book');
