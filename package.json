@@ -47,10 +47,12 @@
     "mongoose": "^4.11.9",
     "next": "^3.0.6",
     "object-dig": "^0.1.1",
+    "obtain-unicode": "^0.0.5",
     "prop-types": "^15.5.10",
     "puppeteer": "^0.10.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "shortid": "^2.2.8",
     "throng": "^4.0.0",
     "uuid": "^3.1.0"
   }
