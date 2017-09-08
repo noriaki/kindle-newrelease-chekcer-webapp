@@ -64,19 +64,19 @@ class UserClass {
   // @async
   booksPurchased() {
     return Book.find({
-      asin: { '$in': this.booksPurchasedObj.map(book => book.asin) },
+      _id: { '$in': this.booksPurchasedObj.map(book => book.asin) },
     });
   }
   // @async
   booksReserved() {
     return Book.find({
-      asin: { '$in': this.booksReservedObj.map(book => book.asin) },
+      _id: { '$in': this.booksReservedObj.map(book => book.asin) },
     });
   }
   // @async
   booksIgnored() {
     return Book.find({
-      asin: { '$in': this.booksIgnoredObj.map(book => book.asin) },
+      _id: { '$in': this.booksIgnoredObj.map(book => book.asin) },
     });
   }
 

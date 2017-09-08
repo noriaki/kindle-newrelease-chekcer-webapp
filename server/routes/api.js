@@ -47,9 +47,10 @@ routes.post('/books', async (req, res) => {
   const { asins } = req.body;
   await User.findOneAndUpdate({ identifier }, { asins });
   for (const asin of asins) {
-    await Book.findOneAndUpdate({ asin }, { asin }, {
-      upsert: true, setDefaultsOnInsert: true,
-    });
+    const { book, newRecord } = await Book.firstOrCreate({ _id: asin });
+    if (newRecord) {
+      exchange.publish({ asins: book.id }, { key: 'books.detail.get' });
+    }
   }
   sendJSON(res, { success: true });
 });

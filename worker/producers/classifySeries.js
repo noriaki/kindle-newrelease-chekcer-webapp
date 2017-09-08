@@ -12,11 +12,11 @@ const Series = require('../../db/models/series');
     const book = await bookCriteria.findOne();
     const { series } = await Series.firstOrCreate(classifySeries(book));
     await series
-      .addAsinIfNotIncludes(book.asin)
+      .addAsinIfNotIncludes(book.id)
       .mergeAuthors(book.authors)
       .save();
     await book.set({ seriesId: series.id }).save();
-    console.log('%s -* %s', series.id, book.asin);
+    console.log('%s -* %s', series.id, book.id);
     if (!seriesIds.includes(series.id)) { seriesIds.push(series.id); }
   }
   console.log({ seriesIds });

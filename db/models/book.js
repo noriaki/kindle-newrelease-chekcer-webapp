@@ -9,7 +9,7 @@ const {
 const connection = require('../').createConnection();
 
 const bookSchema = new Schema({
-  asin: {
+  _id: { // ASIN
     type: String,
     index: true,
     unique: true,
@@ -87,8 +87,8 @@ class BookClass {
       title,
       titleReading: sortableTitle,
     };
-    let book = await this.findOne({ asin });
-    if (book == null) { book = new this({ asin }); }
+    let book = await this.findById(asin);
+    if (book == null) { book = new this({ _id: asin }); }
     return await book.set(params).save();
   }
 }
