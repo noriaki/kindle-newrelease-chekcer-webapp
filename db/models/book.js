@@ -1,8 +1,12 @@
 const moji = require('moji');
 const { Schema } = require('mongoose');
 
+const {
+  normalizeTitle,
+  normalizeAuthors,
+  normalizeDescription,
+} = require('../../lib/normalize');
 const connection = require('../').createConnection();
-const getBooks = require('../../lib/amazon/getBooks');
 
 const bookSchema = new Schema({
   asin: {
@@ -31,13 +35,26 @@ const bookSchema = new Schema({
   description: String,
   url: String,
   image: String,
-  authors: Array,
+  authors: [String],
   authorsReading: String,
   publisher: String,
   publishedAt: Date,
   releasedAt: Date,
+  seriesId: {
+    type: String,
+    index: true,
+  },
 }, {
   timestamps: true,
+});
+
+bookSchema.pre('save', function normalize (next) {
+  if (this.title) { this.title = normalizeTitle(this.title); }
+  if (this.authors) { this.authors = normalizeAuthors(this.authors); }
+  if (this.description) {
+    this.description = normalizeDescription(this.description);
+  }
+  next();
 });
 
 class BookClass {
@@ -47,29 +64,17 @@ class BookClass {
     return { book: await this.create(doc), newRecord: true };
   }
 
-  static async retrieveAndUpdate() {
-    const books = await this.whereNeedsUpdate().exec();
-    if (books == null || books.length === 0) { return false; }
-    const targetASINs = books.map(book => book.asin);
-    await this.updateMany(
-      { asin: { '$in': targetASINs }}, { processing: true }
-    );
-    const details = await getBooks(targetASINs);
-    for (const book of books) {
-      const attributes = details[book.asin];
-      await book.set({
-        ...(attributes || {}), active: Boolean(attributes), processing: false,
-      }).save();
-    }
-    return true;
-  }
-
+  // for self-updating
   static whereNeedsUpdate() {
     const oneDayBefore = new Date(Date.now() - (23 * 60 * 60 * 1000));
     return this
       .where({ processing: false, disable: false })
-      .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }])
-      .limit(10);
+      .or([{ active: false }, { updatedAt: { '$lt': oneDayBefore } }]);
+  }
+  static limitNeedsUpdate() { return this.limit(10); }
+  static entriesNeedsUpdate() {
+    const criteria = this.whereNeedsUpdate();
+    return this.limitNeedsUpdate.call(criteria);
   }
 
   static async createOrUpdateByMyxItem({
@@ -98,5 +103,4 @@ const extractAuthors = authors => (
   moji(authors)
     .convert('ZStoHS').toString()
     .split(/[、､，,]+\s*/g)
-    .map(author => author.replace(/\s+/g, ''))
 );

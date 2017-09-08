@@ -6,15 +6,13 @@ const handler = ({ asins }, ack) => {
   (async () => {
     const details = await getBooks(asins);
     for (const asin of asins) {
+      const book = await Book.findOne({ asin });
       const attributes = details[asin];
       if (attributes) {
-        await Book.findOneAndUpdate(
-          { asin }, { ...attributes, active: true, processing: false }
-        );
+        await book
+          .set({ ...attributes, active: true, processing: false }).save();
       } else {
-        await Book.findOneAndUpdate(
-          { asin }, { disable: true, processing: false }
-        );
+        await book.set({ disable: true, processing: false }).save();
       }
     }
     console.log(

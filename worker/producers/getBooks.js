@@ -4,13 +4,15 @@ const exchange = require('../amqp')();
 const key = 'books.detail.get';
 
 (async () => {
-  let books = await Book.whereNeedsUpdate().exec();
-  while (books != null && books.length > 0) {
+  while (await Book.whereNeedsUpdate().count() > 0) {
+    const books = await Book.entriesNeedsUpdate().exec();
     const asins = books.map(book => book.asin);
-    console.log('Processing to [%s]... %s', key, asins.join());
+    console.log(
+      'Processing to [%s] %s..%s',
+      key, asins[0], asins[asins.length - 1]
+    );
     await Book.updateMany({ asin: { '$in': asins } }, { processing: true });
     exchange.publish({ asins }, { key });
-    books = await Book.whereNeedsUpdate().exec();
   }
 })().then(() => process.exit(0));
 
