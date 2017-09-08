@@ -35,7 +35,7 @@ const bookSchema = new Schema({
   description: String,
   url: String,
   image: String,
-  authors: Array,
+  authors: [String],
   authorsReading: String,
   publisher: String,
   publishedAt: Date,
