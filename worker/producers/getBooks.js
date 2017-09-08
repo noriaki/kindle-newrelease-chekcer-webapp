@@ -6,12 +6,12 @@ const key = 'books.detail.get';
 (async () => {
   while (await Book.whereNeedsUpdate().count() > 0) {
     const books = await Book.entriesNeedsUpdate().exec();
-    const asins = books.map(book => book.asin);
+    const asins = books.map(book => book.id);
     console.log(
       'Processing to [%s] %s..%s',
       key, asins[0], asins[asins.length - 1]
     );
-    await Book.updateMany({ asin: { '$in': asins } }, { processing: true });
+    await Book.updateMany({ _id: { '$in': asins } }, { processing: true });
     exchange.publish({ asins }, { key });
   }
 })().then(() => process.exit(0));
