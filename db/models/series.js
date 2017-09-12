@@ -16,7 +16,8 @@ const seriesSchema = new Schema({
     index: true,
   },
   description: String,
-  url: String,
+  bundleUrl: String,
+  listUrl: String,
   image: String,
   authors: {
     type: [String],
