@@ -64,6 +64,10 @@ class BookClass {
     return { book: await this.create(doc), newRecord: true };
   }
 
+  static firstOrCreateById(_id, doc = {}) {
+    return this.firstOrCreate({ _id }, { _id, ...doc });
+  }
+
   // for self-updating
   static whereNeedsUpdate() {
     const oneDayBefore = new Date(Date.now() - (23 * 60 * 60 * 1000));
