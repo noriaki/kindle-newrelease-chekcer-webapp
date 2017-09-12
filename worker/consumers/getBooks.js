@@ -11,8 +11,9 @@ const handler = ({ asins }, ack) => {
         const book = await Book.findById(asin);
         const attributes = details[asin];
         if (attributes) {
-          await book
-            .set({ ...attributes, active: true, processing: false }).save();
+          await book.set({
+            ...attributes, active: true, processing: false,
+          }).save();
         } else {
           await book.set({ disable: true, processing: false }).save();
         }
