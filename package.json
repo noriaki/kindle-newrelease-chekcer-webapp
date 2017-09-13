@@ -49,7 +49,7 @@
     "object-dig": "^0.1.1",
     "obtain-unicode": "^0.0.5",
     "prop-types": "^15.5.10",
-    "puppeteer": "^0.10.1",
+    "puppeteer": "^0.10.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "shortid": "^2.2.8",

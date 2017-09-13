@@ -1,15 +1,15 @@
-const getBooks = require('../../lib/amazon/getBooks');
-const Book = require('../../db/models/book');
+const getBundles = require('../../lib/amazon/getBundles');
+const Series = require('../../db/models/series');
 const exchange = require('../amqp')();
 
-const options = { name: 'books.detail.get', durable: true };
+const options = { name: 'bundles.detail.get', durable: true };
 const handler = ({ asins }, ack) => {
   (async () => {
-    await Book.updateStatusManyToProcessing(asins);
-    const details = await getBooks(asins);
+    await Series.updateStatusManyToProcessing(asins);
+    const details = await getBundles(asins);
     if (!details.error) {
       await Promise.all(
-        asins.map(asin => Book.createOrUpdateByPAAPI(asin, details[asin]))
+        asins.map(asin => Series.createOrUpdateByPAAPI(asin, details[asin]))
       );
       console.log(
         'Pull from [%s] %s..%s',

@@ -35,7 +35,10 @@ const bookSchema = new Schema({
   description: String,
   url: String,
   image: String,
-  authors: [String],
+  authors: {
+    type: [String],
+    default: [],
+  },
   authorsReading: String,
   publisher: String,
   publishedAt: Date,
@@ -58,10 +61,18 @@ bookSchema.pre('save', function normalize (next) {
 });
 
 class BookClass {
-  static async firstOrCreate(query, doc = query) {
+  static async firstOrCreate(query, doc = {}) {
     const book = await this.findOne(query);
     if (book) { return { book, newRecord: false }; }
-    return { book: await this.create(doc), newRecord: true };
+    return {
+      book: await this.create({ ...query, ...doc }),
+      newRecord: true,
+    };
+  }
+
+  // @async
+  static firstOrCreateById(_id, doc = {}) {
+    return this.firstOrCreate({ _id }, doc);
   }
 
   // for self-updating
@@ -75,6 +86,22 @@ class BookClass {
   static entriesNeedsUpdate() {
     const criteria = this.whereNeedsUpdate();
     return this.limitNeedsUpdate.call(criteria);
+  }
+
+  // @async
+  static updateStatusManyToProcessing(asins) {
+    return this.updateMany({ _id: { '$in': asins } }, { processing: true });
+  }
+
+  static async createOrUpdateByPAAPI(asin, attrs) {
+    const { book } = await this.firstOrCreateById(asin);
+    let attributes = {};
+    if (attrs) {
+      attributes = { ...attrs, active: true, processing: false };
+    } else {
+      attributes = { disable: true, processing: false };
+    }
+    return await book.set(attributes).save();
   }
 
   static async createOrUpdateByMyxItem({

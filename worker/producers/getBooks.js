@@ -1,4 +1,5 @@
 const Book = require('../../db/models/book');
+const sleep = require('../../lib/utils/sleep');
 const exchange = require('../amqp')();
 
 const key = 'books.detail.get';
@@ -11,9 +12,9 @@ const key = 'books.detail.get';
       'Processing to [%s] %s..%s',
       key, asins[0], asins[asins.length - 1]
     );
-    await Book.updateMany({ _id: { '$in': asins } }, { processing: true });
     exchange.publish({ asins }, { key });
   }
+  await sleep(1000);
 })().then(() => process.exit(0));
 
 process.on('unhandledRejection', (...errors) => {

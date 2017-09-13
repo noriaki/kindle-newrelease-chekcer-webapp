@@ -3,9 +3,11 @@ const throng = require('throng');
 const createExchange = require('./amqp');
 const getPurchasedBooksConsumer = require('./consumers/getPurchasedBooks');
 const getBooksConsumer = require('./consumers/getBooks');
+const getBundlesConsumer = require('./consumers/getBundles');
 const consumers = {
   getPurchasedBooksConsumer,
   getBooksConsumer,
+  getBundlesConsumer,
 };
 
 throng({ workers: 1 }, () => {

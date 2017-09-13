@@ -1,15 +1,33 @@
 const { Schema } = require('mongoose');
 
-const generateId = require('../../lib/id');
+const {
+  normalizeBundleTitle,
+  normalizeAuthors,
+  normalizeDescription,
+} = require('../../lib/normalize');
 const connection = require('../').createConnection();
 
 const seriesSchema = new Schema({
-  _id: {
+  _id: { // ASIN
     type: String,
     index: true,
     unique: true,
     required: true,
-    default: generateId,
+  },
+  processing: {
+    type: Boolean,
+    index: true,
+    default: false,
+  },
+  active: {
+    type: Boolean,
+    index: true,
+    default: false,
+  },
+  disable: {
+    type: Boolean,
+    index: true,
+    default: false,
   },
   title: {
     type: String,
@@ -17,6 +35,7 @@ const seriesSchema = new Schema({
   },
   description: String,
   url: String,
+  listUrl: String,
   image: String,
   authors: {
     type: [String],
@@ -31,11 +50,44 @@ const seriesSchema = new Schema({
   timestamps: true,
 });
 
+seriesSchema.pre('save', function normalize (next) {
+  if (this.title) { this.title = normalizeBundleTitle(this.title); }
+  if (this.authors) { this.authors = normalizeAuthors(this.authors); }
+  if (this.description) {
+    this.description = normalizeDescription(this.description);
+  }
+  next();
+});
+
 class SeriesClass {
-  static async firstOrCreate(query, doc = query) {
+  static async firstOrCreate(query, doc = {}) {
     const series = await this.findOne(query);
     if (series) { return { series, newRecord: false }; }
-    return { series: await this.create(doc), newRecord: true };
+    return {
+      series: await this.create({ ...query, ...doc }),
+      newRecord: true,
+    };
+  }
+
+  // @async
+  static firstOrCreateById(_id, doc = {}) {
+    return this.firstOrCreate({ _id }, doc);
+  }
+
+  // @async
+  static updateStatusManyToProcessing(asins) {
+    return this.updateMany({ _id: { '$in': asins } }, { processing: true });
+  }
+
+  static async createOrUpdateByPAAPI(asin, attrs) {
+    const { series } = await this.firstOrCreateById(asin);
+    let attributes = {};
+    if (attrs) {
+      attributes = { ...attrs, active: true, processing: false };
+    } else {
+      attributes = { disable: true, processing: false };
+    }
+    return await series.set(attributes).save();
   }
 
   addAsinIfNotIncludes(asin) {
