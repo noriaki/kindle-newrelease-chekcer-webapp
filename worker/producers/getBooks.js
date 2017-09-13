@@ -12,7 +12,6 @@ const key = 'books.detail.get';
       'Processing to [%s] %s..%s',
       key, asins[0], asins[asins.length - 1]
     );
-    await Book.updateMany({ _id: { '$in': asins } }, { processing: true });
     exchange.publish({ asins }, { key });
   }
   await sleep(1000);
