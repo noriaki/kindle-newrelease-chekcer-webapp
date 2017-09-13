@@ -88,6 +88,22 @@ class BookClass {
     return this.limitNeedsUpdate.call(criteria);
   }
 
+  // @async
+  static updateStatusManyToProcessing(asins) {
+    return this.updateMany({ _id: { '$in': asins } }, { processing: true });
+  }
+
+  static async createOrUpdateByPAAPI(asin, attrs) {
+    const { book } = await this.firstOrCreateById(asin);
+    let attributes = {};
+    if (attrs) {
+      attributes = { ...attrs, active: true, processing: false };
+    } else {
+      attributes = { disable: true, processing: false };
+    }
+    return await book.set(attributes).save();
+  }
+
   static async createOrUpdateByMyxItem({
     asin, authors, productImage, sortableAuthors, sortableTitle, title,
   }) {
