@@ -6,7 +6,18 @@ const getBooksOfBundle = require('../../lib/amazon/getBooksOfBundle');
 const sleep = require('../../lib/utils/sleep');
 const exchange = require('../amqp')();
 
-const categories = getBundleLists.categories;
+let categories = {};
+
+const args = process.argv;
+if (args.length === 2) {
+  categories = getBundleLists.categories;
+} else if (args.length === 3) {
+  const arg = args[2];
+  const cName = getBundleLists.categories[arg];
+  if (!isNaN(arg) && cName) {
+    categories = { [arg]: cName };
+  }
+}
 
 (async () => {
   const categoryIds = Object.keys(categories);
