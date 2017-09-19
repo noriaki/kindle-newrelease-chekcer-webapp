@@ -1,3 +1,4 @@
+const promiseErrorHandler = require('../../lib/promiseErrorHandler');
 const classifySeries = require('../../lib/classifySeries');
 const Book = require('../../db/models/book');
 const Series = require('../../db/models/series');
@@ -20,9 +21,6 @@ const Series = require('../../db/models/series');
     if (!seriesIds.includes(series.id)) { seriesIds.push(series.id); }
   }
   console.log({ seriesIds });
-})().then(() => process.exit(0));
+})().then(() => process.exit(0)).catch(promiseErrorHandler);
 
-process.on('unhandledRejection', (...errors) => {
-  console.dir(...errors);
-  process.exit(1);
-});
+process.on('unhandledRejection', promiseErrorHandler);

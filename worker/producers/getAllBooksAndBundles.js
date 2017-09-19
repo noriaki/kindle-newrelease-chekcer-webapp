@@ -1,6 +1,8 @@
 const chunk = require('lodash.chunk');
 const Book = require('../../db/models/book');
 const Series = require('../../db/models/series');
+const promiseErrorHandler = require('../../lib/promiseErrorHandler');
+const getCrawlerInstance = require('../../lib/crawler');
 const getBundleLists = require('../../lib/amazon/getBundleLists');
 const getBooksOfBundle = require('../../lib/amazon/getBooksOfBundle');
 const sleep = require('../../lib/utils/sleep');
@@ -21,14 +23,21 @@ if (args.length === 2) {
 
 (async () => {
   const categoryIds = Object.keys(categories);
+  const crawler = await getCrawlerInstance({ debug: true });
   for (const categoryId of categoryIds) {
     console.log('# %s (%s)', categories[categoryId], categoryId);
-    const bundleList = await getBundleLists(categoryId);
-    for (const bundleAsins of chunk(bundleList.asins, 10)) {
+    const bundleList = await getBundleLists(categoryId, crawler);
+    const bundleAsinsList = bundleList.asins;
+    for (const bundleAsins of chunk(bundleAsinsList, 10)) {
+      console.log(
+        '## %s..%s (page %d of %d)',
+        bundleAsins[0], bundleAsins[bundleAsins.length - 1],
+        bundleAsinsList.indexOf(bundleAsins[0]) / 10 + 1,
+        bundleAsinsList.length / 10 + 1
+      );
       for (const bundleAsin of bundleAsins) {
-        console.log('## %s', bundleAsin);
         const { series } = await Series.firstOrCreateById(bundleAsin);
-        const asinList = await getBooksOfBundle(bundleAsin);
+        const asinList = await getBooksOfBundle(bundleAsin, crawler);
         for (const asins of chunk(asinList, 10)) {
           for (const asin of asins) {
             await Book.firstOrCreateById(asin);
@@ -41,12 +50,10 @@ if (args.length === 2) {
     }
   }
   await sleep(1000);
-})().then(() => process.exit(0));
+  crawler.finalize();
+})().then(() => process.exit(0)).catch(promiseErrorHandler);
 
-process.on('unhandledRejection', (...errors) => {
-  console.dir(...errors);
-  process.exit(1);
-});
+process.on('unhandledRejection', promiseErrorHandler);
 
 const publishQueue = (asins, key) => {
   exchange.publish({ asins }, { key });
