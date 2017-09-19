@@ -1,6 +1,7 @@
 const chunk = require('lodash.chunk');
 const Book = require('../../db/models/book');
 const Series = require('../../db/models/series');
+const promiseErrorHandler = require('../../lib/promiseErrorHandler');
 const getSeriesLists = require('../../lib/amazon/getSeriesLists');
 const getBooksOfSeries = require('../../lib/amazon/getBooksOfSeries');
 const sleep = require('../../lib/utils/sleep');
@@ -36,9 +37,6 @@ const key = 'books.detail.get';
     }
   }
   await sleep(1000);
-})().then(() => process.exit(0));
+})().then(() => process.exit(0)).catch(promiseErrorHandler);
 
-process.on('unhandledRejection', (...errors) => {
-  console.dir(...errors);
-  process.exit(1);
-});
+process.on('unhandledRejection', promiseErrorHandler);
